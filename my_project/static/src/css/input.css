@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #D5D5D5;
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+}
+
+/* upload.html */
+
+.frame {
+    background: #DFF5FF;
+    width: 97%;
+    height: 94vh;
+    margin-top: 1.5rem;
+}
+
+.left {
+    position: absolute;
+    width: 40%;
+    height: 80vh;
+    margin: 3rem 2rem 0;
+    float: left;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.vl {
+    position: absolute;
+    width: 3px;
+    height: 75vh;
+    background: black;
+    margin: 4rem 50vw 0;
+}
+
+.right {
+    width: 40%;
+    height: 90vh;
+    margin: 1rem 2rem 0;
+    float: right;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.hl {
+    width: 30vw;
+    height: 2px;
+}
+
+/* display.html */
+
+.up-frame {
+    background: #DFF5FF;
+    width: 97vw;
+    height: 80vh;
+    margin-top: 1.5rem;
+}
+
+.down-frame {
+    background: #DFF5FF;
+    width: 97vw;
+    height: 100vh;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* records.html */
+
+.rec-main-frame {
+    width: 97%;
+    height: 94vh;
+    margin-top: 1.5rem;
+}
+
+.rec-left-frame {
+    width: 40vw;
+    height: 93vh;
+    background: #DFF5FF;
+    margin: 1rem 0.5rem 1rem;
+}
+
+.rec-right-frame {
+    width: 55vw;
+    height: 93vh;
+    background: #DFF5FF;
+    margin: 1rem 0.5rem 1rem;
+}

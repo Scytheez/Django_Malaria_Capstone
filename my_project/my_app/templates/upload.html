@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="{% static 'src/css/styles.css' %}" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body>
+    <!-- inner frame -->
+    <main class="frame | justify-center items-center rounded-2xl">
+        <!-- left div -->
+        <section class="left | border-4 border-none border-red-400">
+            <h1 class="text-4xl text-center mt-20 mx-12">Here is an example of a thin blood smear image</h1>
+            <div class="columns-2 w-auto h-auto mt-16">
+                <img src="{% static 'web imgs/1.jpg' %}" alt="Thin Blood Cell" class="rounded-3xl">
+                <img src="{% static 'web imgs/2.jpg' %}" alt="Thin Blood Cell" class="rounded-3xl">
+            </div>
+        </section>
+
+        <!-- line -->
+        <div class="vl"></div>
+    
+        <!-- right div -->
+        <section class="right | border-4 border-none border-red-400">
+            <!-- button -->
+            <button class="float-right m-2 w-28 p-2 rounded-xl bg-black text-white tracking-wider">
+                <a href="">Records</a>
+            </button>
+
+            <!-- Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="upload-frame | mt-32 mr-10 h-96 p-1 bg-sky-400 justify-center items-center rounded-3xl">
+                    <div class="upload-inner-frame | w-full h-full bg-blue-950 justify-center items-center rounded-3xl flex">
+
+                        <img src="{% static 'web imgs/upload-icon.png' %}" alt="icon" class="-mt-56 size-12 absolute">
+
+                        <p class="-mt-36 text-white text-center text-xl font-semibold">Click Browse Files to Upload Files for Prediction</p>
+                        
+                        <div class="hl | -mt-16 absolute rounded-3xl bg-sky-400"></div>
+
+                        <input type="file" name="image" id='id_image' class="hidden" multiple accept="image/png, image/jpeg, image/jpg">
+                        
+                        <label for="id_image" class="mt-16 w-auto block px-6 py-2 rounded
+                            text-black text-sm tracking-wider font-semibold border-none 
+                            outline-none cursor-pointer bg-gray-300 hover:bg-sky-700 absolute">Browse Files</label>
+                        
+                        <p class="mt-36 text-xs text-white absolute">PNG, JPG, JPEG are Allowed.</p>
+                        
+                        <button type="submit"
+                                class="mt-64 bg-sky-500 rounded-lg p-2 w-80 
+                                tracking-widest hover:bg-white font-semibold absolute">Upload</button>
+
+                    </div>
+                </div>
+            </form>
+
+        </section>
+    </main>
+    
+</body>
+</html>

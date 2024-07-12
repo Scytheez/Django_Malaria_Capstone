@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/css/styles.css' %}">
+    <title>Records</title>
+</head>
+<body>
+
+    <main class="rec-main-frame | justify-center items-center flex">
+        <section>
+            <div class="rec-left-frame | p-4 px-10 float-left justify-center items-center rounded-2xl">
+                <!-- content -->
+                <div class="mt-16 border-red-600 border-4 border-solid">
+                    <h1 class="text-2xl font-bold">Data Visualization</h1>
+                </div>
+            </div>
+        </section>  
+
+        <section>
+            <div class="rec-right-frame | p-4 px-16 float-right justify-center items-center rounded-2xl">
+                <!-- content -->
+                <div class="h-32 mt-2 border-red-600 border-4 border-solid">
+                    <button class="float-right m-2 w-28 p-2 rounded-xl bg-black text-white tracking-wider">
+                        <a href="">Upload</a>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

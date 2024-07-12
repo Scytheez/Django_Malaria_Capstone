@@ -1,0 +1,16 @@
+#
+###
+# USE CTRL + F5 TO FORCE RELOAD WEBSITE FOR CSS APPLY CHANGES
+#
+# 1. SETUP VIRTUALENV "virtualenv env" ACTIVATE THE VIRTUALENV BEFORE YOU INSTALL THE MODULES 
+#    "env/Scripts/activate"
+# 2. INSTALL THE NECESSARY MODULES "pip install -r requirements.txt"
+
+# MAKEMIGRATION / MIGRATE
+
+# ?. CHANGE THE FILE PATH IN "ML_Pred_Malaria_Backend/pred_main.py"
+# ?. CHANGE DIRECTORY SCRIPT INSIDE "run.bat" THEN EXECUTE IT
+
+
+
+
