@@ -26,13 +26,13 @@
         <section class="right | border-4 border-none border-red-400">
             <!-- button -->
             <button class="float-right m-2 w-28 p-2 rounded-xl bg-black text-white tracking-wider">
-                <a href="">Records</a>
+                <a href="{% url 'records' %}">Records</a>
             </button>
 
             <!-- Form -->
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}
+                
                 <div class="upload-frame | mt-32 mr-10 h-96 p-1 bg-sky-400 justify-center items-center rounded-3xl">
                     <div class="upload-inner-frame | w-full h-full bg-blue-950 justify-center items-center rounded-3xl flex">
 
@@ -42,7 +42,7 @@
                         
                         <div class="hl | -mt-16 absolute rounded-3xl bg-sky-400"></div>
 
-                        <input type="file" name="image" id='id_image' class="hidden" multiple accept="image/png, image/jpeg, image/jpg">
+                        <input type="file" name="image" id='id_image' class="hidden" multiple required accept="image/png, image/jpeg, image/jpg">
                         
                         <label for="id_image" class="mt-16 w-auto block px-6 py-2 rounded
                             text-black text-sm tracking-wider font-semibold border-none 

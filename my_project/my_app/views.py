@@ -1,33 +1,30 @@
+from ML_Pred_Malaria_Backend.pred_main import validate, predict
+
 from django.shortcuts import render, redirect
-from .form import ImageUploadForm
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+from .models import upload_img
 
-#from ML_Pred_Malaria_Backend.pred_main import 
-
-#   Base Upload Webpage
+# Upload Webpage
 def upload(request):
     if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            images = request.FILES.getlist('image')
-            fs = FileSystemStorage()
-            image_urls = []
-            for image in images:
-                filename = fs.save(image.name, image)
-                image_urls.append(fs.url(filename))
-            return render(request, 'display.html', {'images': image_urls})
+        images = request.FILES.getlist('image')
+        for image in images:
+            upload_img.objects.create(image=image)
+        
+        # validate images
+        validate()
+
+        # predict images
+        predict()
+
+        return redirect('display_images')
     else:
-        form = ImageUploadForm()
-    return render(request, 'upload.html')
+        return render(request, 'upload.html')
 
-#   Display Image
+# Display Image
 def display_images(request):
-    fs = FileSystemStorage()
-    files = fs.listdir(settings.MEDIA_ROOT)[1]  # get list of files in media directory
-    image_urls = [fs.url(file) for file in files]
-    return render(request, 'display.html', {'images': image_urls})
+    images = upload_img.objects.all()
+    return render(request, 'display.html', {'images': images})
 
-#   Records
+# Records
 def records(request):
     return render(request, 'records.html')
