@@ -19,17 +19,45 @@
 
     <section>
         <div class="down-frame | p-8 justify-center items-center rounded-2xl">
-            <div class="mt-28 border-4 border-solid border-red-900">
+            <div class="mt-28 border-4 border-none border-red-900">
+
+                <!-- Display Images -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                    {% if images %}
-                        {% for image in images %}
+                    {% if page_obj %}
+                        {% for image in page_obj %}
                             <img src="{{ image.image.url }}" alt="image" class="w-56 h-56 rounded-3xl">
                         {% endfor %}
                     {% endif %}
                 </div>
-                
-                <!-- pagination -->
             </div>
+
+            <!-- pagination -->
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+        
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+        
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+
+            <!-- Buttons -->
+            <button class="my-20 mx-36 bg-sky-500">
+                <a href="{% url 'save' %}" class="text-3xl">Save</a>
+            </button>
+
+            <button class="my-20 mx-36 bg-red-700">
+                <a href="{% url 'reset' %}" class="text-3xl">Reset</a>
+            </button>
         </div>
     </section>
 </body>

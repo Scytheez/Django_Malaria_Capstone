@@ -7,7 +7,7 @@ import os
 class upload_img(models.Model):
     image = models.ImageField(upload_to='uploaded_img/', null=True, blank=True)
     status = models.CharField(max_length=12, null=True, blank=True, default='NULL')
-    con_lvl = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True, default=00.00)
+    con_lvl = models.CharField(max_length=5, null=True, blank=True, default='NULL')
     label = models.CharField(max_length=12, null=True, blank=True, default='NULL')
 
     def move_image(self, new_directory):
@@ -22,3 +22,19 @@ class upload_img(models.Model):
 
     def __str__(self):
         return str(self.image)
+
+class SavedRecord(models.Model):
+    record_number = models.IntegerField(null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Record {self.record_number} - {self.date}"
+
+class RecordData(models.Model):
+    record_number = models.ForeignKey(SavedRecord, on_delete=models.CASCADE, related_name='record_data')
+    image = models.ImageField(null=True, blank=True)
+    con_lvl = models.CharField(max_length=5, null=True, blank=True)
+    label = models.CharField(max_length=12, null=True, blank=True)
+
+    def __str__(self):
+        return f"Data for Record {self.record_number.record_number} - {self.label}"

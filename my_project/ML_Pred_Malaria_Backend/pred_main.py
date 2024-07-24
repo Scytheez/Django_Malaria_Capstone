@@ -45,7 +45,7 @@ def validate():
 
                 predictions = model.predict(img_array)
                 score = tf.nn.softmax(predictions[0])
-                confidence = ("{:.2f}%".format(100 * np.max(score)))
+                confidence = ("{:.2f}".format(100 * np.max(score)))
 
                 print("Image: ", filename)
                 print(f'{class_names[np.argmax(score)]} = {score}')
@@ -66,7 +66,7 @@ def validate():
                         update = upload_img.objects.get(image=update_old_path)
                         update.image = update_new_path
                         update.status = 'invalid'
-                        update.con_lvl = 100 * np.max(score)
+                        update.con_lvl = confidence
                         update.save()
                     except upload_img.DoesNotExist:
                         print('No record found')
@@ -83,7 +83,7 @@ def validate():
                         update = upload_img.objects.get(image=update_old_path)
                         update.image = update_new_path
                         update.status = 'valid'
-                        update.con_lvl = 100 * np.max(score)
+                        update.con_lvl = confidence
                         update.save()
                     except upload_img.DoesNotExist:
                         print('No Record Found')
@@ -135,7 +135,7 @@ def predict():
 
                 predictions = model.predict(img_array)
                 score = tf.nn.softmax(predictions[0])
-                confidence = ("{:.2f}%".format(100 * np.max(score)))
+                confidence = ("{:.2f}".format(100 * np.max(score)))
 
                 print("Image: ", filename)
                 print(f'Prediction: {class_names[np.argmax(score)]}')
@@ -156,7 +156,7 @@ def predict():
                         update = upload_img.objects.get(image=update_old_path)
                         update.image = update_new_path
                         update.label = 'uninfected'
-                        update.con_lvl = 100 * np.max(score)
+                        update.con_lvl = confidence
                         update.save()
                     except upload_img.DoesNotExist:
                         print('No Record Found')
@@ -173,7 +173,7 @@ def predict():
                         update = upload_img.objects.get(image=update_old_path)
                         update.image = update_new_path
                         update.label = 'parasitized'
-                        update.con_lvl = 100 * np.max(score)
+                        update.con_lvl = confidence
                         update.save()
                     except upload_img.DoesNotExist:
                         print('No Record Found')

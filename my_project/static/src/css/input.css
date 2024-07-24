@@ -72,7 +72,7 @@ body {
 .down-frame {
     background: #DFF5FF;
     width: 97vw;
-    height: 100vh;
+    /* height: 100vh; */
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
 }

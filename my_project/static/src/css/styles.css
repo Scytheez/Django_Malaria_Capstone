@@ -579,6 +579,16 @@ video {
   margin-right: 3rem;
 }
 
+.mx-36 {
+  margin-left: 9rem;
+  margin-right: 9rem;
+}
+
+.my-20 {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
 .-mt-16 {
   margin-top: -4rem;
 }
@@ -785,6 +795,11 @@ video {
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
 
+.bg-red-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(185 28 28 / var(--tw-bg-opacity));
+}
+
 .bg-sky-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(56 189 248 / var(--tw-bg-opacity));
@@ -967,7 +982,7 @@ body {
 .down-frame {
   background: #DFF5FF;
   width: 97vw;
-  height: 100vh;
+  /* height: 100vh; */
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
