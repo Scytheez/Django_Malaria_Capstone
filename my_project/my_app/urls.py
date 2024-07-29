@@ -8,7 +8,10 @@ urlpatterns = [
     path('images/', views.display_images, name='display_images'),
     path('records/', views.records, name='records'),
     path('reset/', views.reset, name='reset'),
-    path('save/', views.save, name='save')
+    path('save/', views.save, name='save'),
+    path('view/<int:record_id>', views.view_img, name='view_img'),
+    path('delete/<int:record_id>', views.del_record, name='del_record'),
+    path('pdf_generate/<int:record_id>/', views.pdf_generate, name='pdf_generate'),
 ] 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

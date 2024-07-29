@@ -98,3 +98,17 @@ body {
     background: #DFF5FF;
     margin: 1rem 0.5rem 1rem;
 }
+
+/* view.html */
+
+.top-frame {
+    background: #DFF5FF;
+    width: 97vw;
+    margin-top: 1.5rem;
+}
+
+.down-frame {
+    background: #DFF5FF;
+    width: 97vw;
+    margin-top: 1.5rem;
+}

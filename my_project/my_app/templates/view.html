@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/css/styles.css' %}">
+    <title>View</title>
+</head>
+<body>
+    <section>
+        <div class="top-frame | p-8 justify-center items-center rounded-2xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {% for image in record %}
+                    <div class="w-60 h-80 bg-neutral-800 rounded-3xl text-neutral-300 p-4 flex flex-col items-start justify-center gap-3 hover:bg-gray-900 hover:shadow-2xl hover:shadow-sky-400 transition-shadow">
+                        <div class="w-52 h-56 bg-sky-300 rounded-2xl">
+                            <img src="{{ image.image.url }}" alt="image" class="w-52 h-56 rounded-2xl">
+                        </div>
+                        
+                        <div>
+                            <p class="text-lg font-extrabold uppercase">{{image.con_lvl}}% {{image.label}}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="down-frame | p-8 justify-center items-center rounded-2xl">
+            <p class="text-center text-black text-3xl font-extrabold tracking-wider">EXPORT</p>
+            
+            <div class="text-center">
+                <button class="p-2 px-20 my-16 mx-10 bg-black rounded-xl">
+                {% for rec in record %}
+                    <a href="{% url 'pdf_generate' rec.record_number_id %}" class="text-3xl text-white font-bold">{% endfor %}PDF</a>
+                </button>
+                
+                <button class="p-2 px-20 my-16 mx-10 bg-black rounded-xl">
+                    <a href="" class="text-3xl text-white font-bold">CSV</a>
+                </button>
+            </div>
+        
+        </div>
+    </section>
+</body>
+</html>

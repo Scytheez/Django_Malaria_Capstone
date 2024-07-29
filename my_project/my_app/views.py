@@ -8,6 +8,13 @@ from datetime import date
 import shutil
 import os
 
+# PDF Generate Modules
+import io
+from django.http import FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+
 ##### FUNCTIONS
 def rm_file(path):
         for filename in os.listdir(path):
@@ -38,7 +45,7 @@ def upload(request):
 ##### DISPLAY IMAGE
 def display_images(request):
     images = upload_img.objects.all()
-    paginator = Paginator(images, 18)
+    paginator = Paginator(images, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -106,6 +113,17 @@ def save(request):
             insert = RecordData(image=image, label=label, con_lvl=con_lvl, record_number=saved_record)
             insert.save()
 
+    # update image path in RecordData model
+    updated_path = f'records/{dir_name}/'
+    update_rec_data = RecordData.objects.filter(image__startswith='media')
+    with transaction.atomic():
+        for item in update_rec_data:
+            record_path = item.image.path
+            record_name = os.path.basename(record_path)
+            record_full = os.path.join(updated_path, record_name)
+            item.image = record_full
+            item.save()
+
     # Removing record from previous model/dir
     upload_img.objects.all().delete()
     
@@ -119,4 +137,80 @@ def save(request):
 
 ##### RECORDS
 def records(request):
-    return render(request, 'records.html')
+    model_record = SavedRecord.objects.all()
+    paginator = Paginator(model_record, 6)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'records.html', {'page_obj': page_obj})
+
+def del_record(request, record_id):
+    # delete record in dir
+    path = RecordData.objects.filter(record_number_id=record_id).first()
+    path = str(path.image)
+    part = path.split('/')
+    record = part[1]
+    try:
+        folder_path = 'media/records/'
+        if record in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, record)
+            shutil.rmtree(file_path)
+            print(f"Record '{record}' deleted successfully.")
+        else:
+            print(f"Record '{record}' not found in the folder.")
+    except Exception as e:
+        print(e)
+    # delete record in model
+    del_saved = SavedRecord.objects.filter(id=record_id)
+    del_data = RecordData.objects.filter(record_number_id=record_id)
+    for item in del_saved:
+        item.delete()
+    for item in del_data:
+        item.delete()
+
+    return redirect('records')
+
+##### VIEW
+def view_img(request, record_id):
+    record = RecordData.objects.filter(record_number_id=record_id)
+    return render(request, 'view.html', {'record': record})
+
+# Pdf generator
+def pdf_generate(request, record_id):
+    get_rec = RecordData.objects.filter(record_number_id=record_id)
+
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    data = []
+
+    for item in get_rec:
+        if item.image and item.image.path and item.label:
+            img_url = item.image.path
+            lbl = item.label
+            data.append((img_url, lbl))
+
+    x_offset = 0.5 * inch
+    y_offset = height - 1 * inch
+    col_width = (width - 1 * inch) / 5
+    row_height = 2 * inch
+    gap = 0.2 * inch
+
+    for i, (image_path, label) in enumerate(data):
+        if i % 5 == 0 and i != 0:
+            y_offset -= row_height
+            x_offset = 0.5 * inch
+
+        if i % 25 == 0 and i != 0:
+            p.showPage()
+            y_offset = height - 1 * inch
+
+        p.drawImage(image_path, x_offset, y_offset - 1 * inch, width=col_width - gap, height=col_width - gap)
+        p.drawString(x_offset, y_offset - 1.2 * inch - gap, label)
+        x_offset += col_width
+
+    p.showPage()
+    p.save()
+
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='record.pdf')
