@@ -1,21 +1,24 @@
 from ML_Pred_Malaria_Backend.pred_main import validate, predict
 
+from django.db.models import Count, Q
 from django.db import transaction
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from .models import upload_img, SavedRecord, RecordData
 from datetime import date
+import json
 import shutil
 import os
 
-# PDF Generate Modules
+# PDF/CSV Generate Modules
 import io
-from django.http import FileResponse
+import csv
+from django.http import FileResponse, HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 
-##### FUNCTIONS
+########################### FUNCTIONS
 def rm_file(path):
         for filename in os.listdir(path):
             file_path = os.path.join(path, filename)
@@ -25,7 +28,7 @@ def rm_file(path):
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
 
-##### UPLOAD IMAGE
+########################### UPLOAD IMAGE
 def upload(request):
     if request.method == 'POST':
         images = request.FILES.getlist('image')
@@ -42,14 +45,34 @@ def upload(request):
     else:
         return render(request, 'upload.html')
 
-##### DISPLAY IMAGE
+########################### DISPLAY IMAGE
 def display_images(request):
     images = upload_img.objects.all()
     paginator = Paginator(images, 15)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'display.html', {'page_obj': page_obj})
+    par_count = upload_img.objects.filter(label='parasitized').count()
+    un_count = upload_img.objects.filter(label='uninfected').count()
+
+    context = {
+        'page_obj': page_obj,
+        'par_count': par_count,
+        'un_count': un_count,
+    }
+
+    return render(request, 'display.html', context)
+
+def remove_img(request, img_id):
+    img = upload_img.objects.get(id=img_id)
+    # remove from dir
+    path = f'media/{img}'
+    os.remove(path)
+
+    # remove from model
+    img.delete()
+
+    return redirect('display_images')
 
 def reset(request):
     upload_img.objects.all().delete()
@@ -135,13 +158,36 @@ def save(request):
 
     return redirect('records')
 
-##### RECORDS
+########################### RECORDS
 def records(request):
     model_record = SavedRecord.objects.all()
     paginator = Paginator(model_record, 6)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    return render(request, 'records.html', {'page_obj': page_obj})
+
+    date_value = list(SavedRecord.objects.values_list('date', flat=True).distinct())
+    date_value = [date.strftime('%Y-%m-%d') for date in date_value]
+
+    counts = SavedRecord.objects.annotate(
+        parasitized_count=Count('record_data', filter=Q(record_data__label='parasitized')),
+        uninfected_count=Count('record_data', filter=Q(record_data__label='uninfected'))
+    ).values('date', 'parasitized_count', 'uninfected_count')
+
+    parasitized_counts = []
+    uninfected_counts = []
+
+    for count in counts:
+        parasitized_counts.append(count['parasitized_count'])
+        uninfected_counts.append(count['uninfected_count'])
+
+    context = {
+        'page_obj': page_obj,
+        'date_value': json.dumps(date_value),
+        'parasitized_count': json.dumps(parasitized_counts),
+        'uninfected_count': json.dumps(uninfected_counts),
+    }
+
+    return render(request, 'records.html', context)
 
 def del_record(request, record_id):
     # delete record in dir
@@ -169,10 +215,13 @@ def del_record(request, record_id):
 
     return redirect('records')
 
-##### VIEW
+########################### VIEW
 def view_img(request, record_id):
     record = RecordData.objects.filter(record_number_id=record_id)
-    return render(request, 'view.html', {'record': record})
+    paginator = Paginator(record, 10)
+    page_number = request.GET.get("page")
+    record_page_obj = paginator.get_page(page_number)
+    return render(request, 'view.html', {'record_page_obj': record_page_obj})
 
 # Pdf generator
 def pdf_generate(request, record_id):
@@ -214,3 +263,20 @@ def pdf_generate(request, record_id):
 
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename='record.pdf')
+
+def csv_generate(request, record_id):
+    get_rec = RecordData.objects.filter(record_number_id=record_id)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="data.csv"'
+
+    writer = csv.writer(response)
+    
+    writer.writerow(['Prediction', 'Confidence Level'])
+
+    for item in get_rec:
+        lbl = item.label
+        conf = item.con_lvl
+        writer.writerow([lbl, f'{conf}%'])
+
+    return response

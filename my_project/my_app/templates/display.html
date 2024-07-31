@@ -5,14 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link href="{% static 'src/css/styles.css' %}" rel="stylesheet">
+    <script src="{% static 'src/js/chart.umd.js' %}"></script>
     <title>Display</title>
 </head>
 <body>
+    <!-- Data Chart -->
     <section>
         <div class="up-frame | p-8 justify-center items-center rounded-2xl">
-            <div class="up-content | p-4 border-red-500 border-4 border-solid justify-center items-center">
+            <div class="up-content | p-4 border-red-500 border-4 border-none justify-center items-center">
                 <h1 class="text-3xl text-left font-bold tracking-wider">Data Visualization</h1>
-                <img src="" alt="Data" class="size-10 mt-48">
+                    <div class="flex w-96 max-w-lg mx-auto my-6">
+                        <canvas id="myPieChart"></canvas>
+                        <script>
+                        var infect_count = JSON.parse('{{ par_count|escapejs }}');
+                        var uninfect_count = JSON.parse('{{ un_count|escapejs }}');
+                        
+                        const data = {
+                                    labels: ['Infected', 'Uninfected'],
+                                    datasets: [
+                                        {
+                                            label: 'Cell Status',
+                                            data: [infect_count, uninfect_count],
+                                            backgroundColor: ['rgb(255, 51, 51)', 'rgb(0, 64, 255)'],
+                                        }
+                                    ]
+                                };
+                
+                        const config = {
+                            type: 'pie',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            font: {
+                                                size: 26,
+                                            },
+                                            color: function(context) {
+                                                const label = context.chart.data.labels[context.dataIndex];
+                                                if (label === 'Infected') {
+                                                    return 'rgb(255, 0, 0)';
+                                                } else if (label === 'Uninfected') {
+                                                    return 'rgb(0, 0, 255)'; 
+                                                }
+                                                return 'rgb(0, 0, 0)'; 
+                                            },
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Prediction Status',
+                                        font: {
+                                            size: 20
+                                        }
+                                    }
+                                }
+                            },
+                        };
+                
+                        const myPieChart = new Chart(
+                            document.getElementById('myPieChart'),
+                            config
+                        );
+                
+                        function updateChartData() {
+                            myPieChart.data.datasets[0].data = [6, 9];
+                            myPieChart.update();
+                        }
+                        </script>
+                    </div>
             </div>
         </div>
     </section>
@@ -32,13 +95,16 @@
                                 </div>
                                 
                                 <div class="">
-                                    <p class="font-extrabold">Prediction: {{image.label}}</p>
-                                    <p class="font-extrabold">Confidence Level: {{image.con_lvl}}%</p>
+                                    <p class="font-extrabold uppercase">{{image.con_lvl}}% | {{image.label}}</p>
                                 </div>
                                 
                                 <div class="mt-2 justify-center items-center">
-                                    <button class="bg-sky-700 font-extrabold ml-1 p-2 px-7 rounded-xl hover:bg-sky-500 transition-colors">View</button>
-                                    <button class="bg-sky-700 font-extrabold ml-2 p-2 px-8 rounded-xl hover:bg-sky-500 transition-colors">Edit</button>
+                                    <button class="bg-sky-700 font-extrabold ml-1 p-2 px-6 rounded-xl hover:bg-sky-500 transition-colors">
+                                        <a href="{{ image.image.url }}" target="_blank">View</a>
+                                    </button>
+                                    <button class="bg-sky-700 font-extrabold ml-2 p-2 px-5 rounded-xl hover:bg-sky-500 transition-colors">
+                                        <a href="{% url 'remove_img' image.id %}">Remove</a>
+                                    </button>
                                 </div>
                             </div>
                             {% else %}
