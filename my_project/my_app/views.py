@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from .models import upload_img, SavedRecord, RecordData
 from datetime import date
+from collections import defaultdict
 import json
 import shutil
 import os
@@ -173,12 +174,15 @@ def records(request):
         uninfected_count=Count('record_data', filter=Q(record_data__label='uninfected'))
     ).values('date', 'parasitized_count', 'uninfected_count')
 
-    parasitized_counts = []
-    uninfected_counts = []
+    parasitized_counts = defaultdict(int)
+    uninfected_counts = defaultdict(int)
 
     for count in counts:
-        parasitized_counts.append(count['parasitized_count'])
-        uninfected_counts.append(count['uninfected_count'])
+        parasitized_counts[count['date']] += count['parasitized_count']
+        uninfected_counts[count['date']] += count['uninfected_count']
+
+    parasitized_counts = list(parasitized_counts.values())
+    uninfected_counts = list(uninfected_counts.values())
 
     context = {
         'page_obj': page_obj,
