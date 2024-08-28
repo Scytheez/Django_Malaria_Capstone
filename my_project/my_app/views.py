@@ -29,6 +29,9 @@ def rm_file(path):
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
 
+def custom_404(request, exception):
+    return render(request, '404.html')
+
 ########################### UPLOAD IMAGE
 def upload(request):
     if request.method == 'POST':

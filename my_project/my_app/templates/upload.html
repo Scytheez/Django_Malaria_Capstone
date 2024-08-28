@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link href="{% static 'src/css/styles.css' %}" rel="stylesheet">
-    <title>Document</title>
+    <title>Upload</title>
 </head>
 <body>
     <!-- inner frame -->
@@ -25,7 +25,7 @@
         <!-- right div -->
         <section class="right | border-4 border-none border-red-400">
             <!-- button -->
-            <button class="float-right m-2 w-28 p-2 rounded-xl bg-black text-white tracking-wider">
+            <button class="float-right mt-10 mr-10 w-28 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">
                 <a href="{% url 'records' %}">Records</a>
             </button>
 
@@ -33,7 +33,7 @@
             <form id="uploadForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <div class="upload-frame | mt-32 mr-10 h-96 p-1 bg-sky-400 justify-center items-center rounded-3xl">
+                <div class="upload-frame | mt-40 mr-10 h-96 p-1 bg-sky-400 justify-center items-center rounded-3xl">
                     <div class="upload-inner-frame | w-full h-full bg-blue-950 justify-center items-center rounded-3xl flex">
 
                         <img src="{% static 'web imgs/upload-icon.png' %}" alt="icon" class="-mt-56 size-12 absolute">
@@ -71,6 +71,15 @@
     
 </body>
 </html>
+
+<script>
+    document.getElementById('id_image').addEventListener('change', function() {
+        if (this.files.length > 30) {
+            alert('You can only upload a maximum of 30 images.');
+            this.value = '';
+        }
+    });
+</script>
 
 <script>
     document.getElementById('uploadForm').onsubmit = function() {
