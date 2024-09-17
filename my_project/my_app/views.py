@@ -1,4 +1,4 @@
-from ML_Pred_Malaria_Backend.pred_main import validate, predict
+from ML_Pred_Malaria_Backend.pred_main import validate, predict, cfm
 
 from django.db.models import Count, Q
 from django.db import transaction
@@ -64,8 +64,9 @@ def display_images(request):
         'par_count': par_count,
         'un_count': un_count,
     }
-
+    
     return render(request, 'display.html', context)
+
 
 def remove_img(request, img_id):
     img = upload_img.objects.get(id=img_id)
@@ -162,6 +163,10 @@ def save(request):
 
     return redirect('records')
 
+def confm(request):
+    #cfm()
+    return redirect('display_images')
+
 ########################### RECORDS
 def records(request):
     model_record = SavedRecord.objects.all()
@@ -233,10 +238,19 @@ def view_img(request, record_id):
 # Pdf generator
 def pdf_generate(request, record_id):
     get_rec = RecordData.objects.filter(record_number_id=record_id)
+    get_date = SavedRecord.objects.get(id=record_id)
 
     buffer = io.BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
+
+    date = get_date.date
+    id_number = record_id
+
+    p.setFont("Helvetica", 12)
+    p.drawString(0.5 * inch, height - 0.7 * inch, f"Patient's Name: ")
+    p.drawString(width - 2 * inch, height - 0.7 * inch, f"ID Number: {id_number}")
+    p.drawString(width - 2 * inch, height - 0.9 * inch, f"Date: {date}")
 
     data = []
 
@@ -244,35 +258,50 @@ def pdf_generate(request, record_id):
         if item.image and item.image.path and item.label:
             img_url = item.image.path
             lbl = item.label
-            data.append((img_url, lbl))
+            if lbl == 'parasitized':
+                status = 'Malaria Positive'
+            else:
+                status = 'Malaria Negative'
+            data.append((img_url, lbl, status))
 
     x_offset = 0.5 * inch
-    y_offset = height - 1 * inch
+    y_offset = height - 1.5 * inch  
     col_width = (width - 1 * inch) / 5
     row_height = 2 * inch
     gap = 0.2 * inch
 
-    for i, (image_path, label) in enumerate(data):
+    for i, (image_path, label, status) in enumerate(data):
         if i % 5 == 0 and i != 0:
             y_offset -= row_height
             x_offset = 0.5 * inch
 
-        if i % 25 == 0 and i != 0:
+        if i % 20 == 0 and i != 0:
             p.showPage()
-            y_offset = height - 1 * inch
+            y_offset = height - 1.5 * inch  
 
-        p.drawImage(image_path, x_offset, y_offset - 1 * inch, width=col_width - gap, height=col_width - gap)
-        p.drawString(x_offset, y_offset - 1.2 * inch - gap, label)
+        img_width = col_width - gap
+        img_height = col_width - gap
+        x_centered = x_offset + (col_width - img_width) / 2
+
+        p.drawImage(image_path, x_centered, y_offset - img_height, width=img_width, height=img_height)
+        p.drawString(x_centered, y_offset - img_height - 0.2 * inch, label)
+        p.drawString(x_centered, y_offset - img_height - 0.4 * inch, status)
         x_offset += col_width
+
+    p.setFont("Helvetica", 16)
+    p.drawString(width - 3 * inch, 0.5 * inch, f"Validated by: ")
 
     p.showPage()
     p.save()
 
     buffer.seek(0)
+
     return FileResponse(buffer, as_attachment=True, filename='record.pdf')
+
 
 def csv_generate(request, record_id):
     get_rec = RecordData.objects.filter(record_number_id=record_id)
+    get_date = SavedRecord.objects.get(id=record_id)
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="data.csv"'
@@ -281,9 +310,16 @@ def csv_generate(request, record_id):
     
     writer.writerow(['Prediction', 'Confidence Level'])
 
-    for item in get_rec:
+    col = ['', '', '']
+    info = ['ID Number:', 'Date:', 'Validated By:']
+    info_data = [record_id, get_date.date]
+
+    for index, item in enumerate(get_rec):
         lbl = item.label
         conf = item.con_lvl
-        writer.writerow([lbl, f'{conf}%'])
+        info_col = info[index] if index < len(info) else ''
+        col = col[index] if index < len(col) else ''
+        info_data_col = info_data[index] if index < len(info_data) else ''
+        writer.writerow([lbl, f'{conf}%', col, info_col, info_data_col])
 
     return response

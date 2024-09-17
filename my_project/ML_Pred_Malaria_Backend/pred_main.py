@@ -7,6 +7,12 @@ from keras.models import load_model
 
 from my_app.models import upload_img
 
+import seaborn as sns
+sns.set_style('darkgrid')
+from sklearn.metrics import confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import threading
+
 img_height = 180
 img_width = 180
 batch_size = 32 
@@ -124,6 +130,8 @@ def predict():
 
         #input_dir = "src/valid_input/"
         input_dir = 'media/validation/valid/'
+        global predicted
+        predicted = []
 
         print('THIN BLOOD SMEAR PREDICTION')
         for filename in os.listdir(input_dir):
@@ -146,6 +154,7 @@ def predict():
 
                 if predicted_class == 'Uninfected':
                     # directory
+                    predicted.append(predicted_class)
                     old_path = f'media/validation/valid/{filename}'
                     new_path = f'media/uninfected/{filename}'
                     os.rename(old_path, new_path)
@@ -163,6 +172,7 @@ def predict():
 
                 elif predicted_class == 'Parasitized':
                     # directory
+                    predicted.append(predicted_class)
                     old_path = f'media/validation/valid/{filename}'
                     new_path = f'media/parasitized/{filename}'
                     os.rename(old_path, new_path)
@@ -182,6 +192,49 @@ def predict():
 
     except Exception as e:
         print(e)
+    
+
+def cfm():
+    # CONFUSION MATRIX
+    global predicted
+    expected = [
+                'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized',
+                'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized',
+                'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized',
+                'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized',
+                'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized', 'Parasitized',
+                'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected',
+                'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected',
+                'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected',
+                'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected',
+                'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected', 'Uninfected',
+            ]
+
+    """ for i in range(100):
+        expected.append('Parasitized') """
+
+    expected = np.array(expected)
+    predicted = np.array(predicted)
+
+    print(f'{expected} :: {len(expected)} \n {predicted} :: {len(predicted)}')
+
+    cm = confusion_matrix(expected, predicted, labels=['Parasitized', 'Uninfected'])
+    print(f'Confusion Matrix Value: {cm} | {cm.shape}')
+    
+    plt.figure(figsize=(8, 8))
+    sns.heatmap(cm, annot=True, fmt='g', cmap='Blues', 
+                xticklabels=['Parasitized', 'Uninfected'], 
+                yticklabels=['Parasitized', 'Uninfected'])
+    plt.title('Confusion Matrix')
+    plt.ylabel('Expected')
+    plt.xlabel('Predicted')
+    plt.gca().xaxis.set_label_position('top')
+    plt.gca().xaxis.tick_top()
+    plt.gca().figure.subplots_adjust(bottom=0.2)
+
+    print(classification_report(expected, predicted))
+
+    plt.show()
 
 """ if __name__ == '__main__':
     validate()

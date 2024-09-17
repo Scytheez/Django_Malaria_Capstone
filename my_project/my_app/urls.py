@@ -10,6 +10,7 @@ urlpatterns = [
     path('records/', views.records, name='records'),
     path('reset/', views.reset, name='reset'),
     path('save/', views.save, name='save'),
+    path('confm/', views.confm, name='confm'),
     path('view/<int:record_id>', views.view_img, name='view_img'),
     path('delete/<int:record_id>', views.del_record, name='del_record'),
     path('pdf_generate/<int:record_id>/', views.pdf_generate, name='pdf_generate'),

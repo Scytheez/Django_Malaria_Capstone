@@ -10,17 +10,26 @@
 <body>
     <section>
         <div class="top-frame | p-8 justify-center items-center rounded-2xl">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+
+            <button class="float-right mr-10 px-10 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">
+                <a href="{% url 'records' %}">Records</a>
+            </button>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-20">
                 {% for image in record_page_obj %}
-                    <div class="w-60 h-80 bg-neutral-800 rounded-3xl text-neutral-300 p-4 flex flex-col items-start justify-center gap-3 hover:bg-gray-900 hover:shadow-2xl hover:shadow-sky-400 transition-shadow">
-                        <div class="w-52 h-56 bg-sky-300 rounded-2xl">
-                            <img src="{{ image.image.url }}" alt="image" class="w-52 h-56 rounded-2xl">
-                        </div>
-                        
-                        <div>
-                            <p class="text-lg font-extrabold uppercase">{{image.con_lvl}}% {{image.label}}</p>
-                        </div>
-                    </div>
+                    <button>
+                        <a href="{{ image.image.url }}" target="_blank">
+                            <div class="w-60 h-80 bg-neutral-800 rounded-3xl text-neutral-300 p-4 flex flex-col items-start justify-center gap-3 hover:bg-gray-900 hover:shadow-2xl hover:shadow-sky-400 transition-shadow">
+                                <div class="w-52 h-56 bg-sky-300 rounded-2xl">
+                                    <img src="{{ image.image.url }}" alt="image" class="w-52 h-56 rounded-2xl">
+                                </div>
+                                
+                                <div class="justify-center text-center">
+                                    <p class="text-lg font-extrabold uppercase">{{image.con_lvl}}% | {{image.label}}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </button>
                 {% endfor %}
             </div>
 
