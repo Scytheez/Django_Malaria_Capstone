@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
     <main class="rec-main-frame | justify-center items-center flex">
         <section>
             <div class="rec-left-frame | p-4 px-10 float-left justify-center items-center rounded-2xl">
-                <!-- Data Chart -->
+                 Data Chart 
                 <div class="mt-16 border-red-600 border-4 border-none">
                     <h1 class="text-2xl font-bold">Record Data Summary</h1>
                     <div class="mt-16 flex w-28 max-w-lg mx-auto my-6"></div>
@@ -67,7 +67,7 @@
 
         <section>
             <div class="rec-right-frame | p-4 px-16 float-right justify-center items-center rounded-2xl">
-                <!-- content -->
+                 content 
                 <button class="float-right mr-5 mt-10 w-28 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">
                     <a href="{% url 'upload' %}">Upload</a>
                 </button>
@@ -76,7 +76,7 @@
                     {% if page_obj %}
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         {% for record in page_obj %}
-                        <!-- Card UI -->
+                         Card UI 
                         <div class="flex flex-col bg-white w-full rounded-lg py-4 px-6 border">
                             <h3 class="text-base font-semibold text-gray-900 text-center">Record {{ record.record_number }}</h3>
                             <div class="flex gap-2 text-sm text-gray-500 border-b pb-2">
@@ -97,7 +97,7 @@
                     {% endif %}
                 </div>
 
-                <!-- pagination -->
+                 pagination 
                 <div class="pagination text-center mt-10">
                     <span class="step-links">
                         {% if page_obj.has_previous %}
@@ -122,5 +122,127 @@
     </main>
 
 </body>
-</html>
+</html> -->
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/css/styles.css' %}">
+    <script src="{% static 'src/js/chart.umd.js' %}"></script>
+    <title>Records</title>
+    <style>
+        .bg-custom-blue {
+            background-color: #DFF5FF;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <main class="flex flex-col lg:flex-row gap-8">
+            <section class="w-full lg:w-2/5 bg-custom-blue rounded-2xl p-4">
+                <!-- Data Chart -->
+                <div class="mt-8">
+                    <h1 class="text-2xl font-bold mb-8">Record Data Summary</h1>
+                    <div class="w-full h-64 md:h-96">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </section>  
+
+            <section class="w-full lg:w-3/5 bg-custom-blue rounded-2xl p-4">
+                <!-- content -->
+                <div class="flex justify-end mb-8">
+                    <a href="{% url 'upload' %}" class="w-28 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800 text-center">Upload</a>
+                </div>
+
+                <div class="mt-8">
+                    {% if page_obj %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for record in page_obj %}
+                        <!-- Card UI -->
+                        <div class="flex flex-col bg-white rounded-lg py-4 px-6 border">
+                            <h3 class="text-base font-semibold text-gray-900 text-center">Record {{ record.record_number }}</h3>
+                            <div class="flex gap-2 text-sm text-gray-500 border-b pb-2">
+                                <p class="">Date Save:</p>
+                                <p>{{ record.date }}</p>
+                            </div>
+                            <div class="flex justify-around items-center py-3">
+                                <a href="{% url 'view_img' record.id %}" class="font-semibold text-sm text-green-700 border-solid border-green-700 border-2 p-1 px-4 rounded-lg hover:bg-green-700 hover:text-white">View</a>
+                                <a href="{% url 'del_record' record.id %}" class="font-semibold text-sm text-red-700 border-solid border-red-700 border-2 p-1 px-4 rounded-lg hover:bg-red-700 hover:text-white">Delete</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- pagination -->
+                <div class="pagination text-center mt-10">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1" class="px-2 py-1 bg-sky-500 text-white rounded mr-1">&laquo; first</a>
+                            <a href="?page={{ page_obj.previous_page_number }}" class="px-2 py-1 bg-sky-500 text-white rounded mr-1">previous</a>
+                        {% endif %}
+            
+                        <span class="current px-2 py-1 bg-gray-200 rounded">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+            
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="px-2 py-1 bg-sky-500 text-white rounded ml-1">next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="px-2 py-1 bg-sky-500 text-white rounded ml-1">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const datelist = JSON.parse('{{ date_value|escapejs }}');
+        const parasitized_count = JSON.parse('{{ parasitized_count|escapejs }}');
+        const uninfected_count = JSON.parse('{{ uninfected_count|escapejs }}');
+
+        const barData = {
+            labels: datelist,
+            datasets: [{
+                label: 'Parasitized',
+                data: parasitized_count,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Uninfected',
+                data: uninfected_count,
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const barConfig = {
+            type: 'bar',
+            data: barData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const barChart = new Chart(
+            document.getElementById('barChart'),
+            barConfig
+        );
+    });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,9 @@
     <title>Upload</title>
 </head>
 <body>
-    <!-- inner frame -->
+     inner frame 
     <main class="frame | justify-center items-center rounded-2xl">
-        <!-- left div -->
+         left div 
         <section class="left | border-4 border-none border-red-400">
             <h1 class="text-4xl text-center mt-20 mx-12">Here is an example of a thin blood smear image</h1>
             <div class="columns-2 w-auto h-auto mt-16">
@@ -19,17 +19,17 @@
             </div>
         </section>
 
-        <!-- line -->
+         line 
         <div class="vl"></div>
     
-        <!-- right div -->
+         right div 
         <section class="right | border-4 border-none border-red-400">
-            <!-- button -->
+             button 
             <button class="float-right mt-10 mr-10 w-28 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">
                 <a href="{% url 'records' %}">Records</a>
             </button>
 
-            <!-- Form -->
+             Form 
             <form id="uploadForm" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
@@ -70,12 +70,76 @@
     </main>
     
 </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="{% static 'src/css/styles.css' %}" rel="stylesheet">
+    <title>Upload</title>
+</head>
+<body class="bg-gray-100">
+    <main class="container mx-auto p-4 md:p-8">
+        <div class="bg-sky-100 rounded-2xl p-8 md:p-10 shadow-lg mt-10">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left section -->
+                <section class="w-full lg:w-1/2">
+                    <h1 class="text-2xl md:text-4xl text-center mb-8">Here is an example of a thin blood smear image</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-20">
+                        <img src="{% static 'web imgs/1.jpg' %}" alt="Thin Blood Cell" class="rounded-3xl">
+                        <img src="{% static 'web imgs/2.jpg' %}" alt="Thin Blood Cell" class="rounded-3xl">
+                    </div>
+                </section>
+
+                <!-- Right section -->
+                <section class="w-full lg:w-1/2">
+                    <div class="flex justify-end mb-4">
+                        <button class="w-28 p-2 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">
+                            <a href="{% url 'records' %}">Records</a>
+                        </button>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="uploadForm" method="post" enctype="multipart/form-data" class="mt-8">
+                        {% csrf_token %}
+                        
+                        <div class="bg-sky-400 p-1 rounded-3xl">
+                            <div class="bg-blue-950 rounded-3xl p-8 flex flex-col items-center">
+                                <img src="{% static 'web imgs/upload-icon.png' %}" alt="icon" class="w-12 h-12 mb-4">
+                                <p class="text-white text-center text-xl font-semibold mb-4">Click Browse Files to Upload Files for Prediction</p>
+                                <div class="w-full h-1 bg-sky-400 rounded-full mb-8"></div>
+                                <input type="file" name="image" id='id_image' class="hidden" multiple required accept="image/png, image/jpeg, image/jpg">
+                                <label for="id_image" class="mb-4 px-6 py-2 rounded text-black text-sm tracking-wider font-semibold cursor-pointer bg-gray-300 hover:bg-sky-700">Browse Files</label>
+                                <p class="text-xs text-white mb-8">PNG, JPG, JPEG are Allowed.</p>
+                                <button type="submit" class="bg-sky-500 rounded-lg p-2 w-full max-w-xs tracking-widest hover:bg-white font-semibold">Upload</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div id="loading" class="hidden mt-4">
+                        <div class="progress">
+                            <div class="inner"></div>
+                        </div>
+                        <div class="spinner text-center mt-2">Processing...</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    <div id="blur-background" class="hidden"></div>
+</body>
 </html>
 
+
+<!-- UPLOAD LOADER -->
 <script>
     document.getElementById('id_image').addEventListener('change', function() {
-        if (this.files.length > 100) {
-            alert('You can only upload a maximum of 100 images.');
+        if (this.files.length > 30) {
+            alert('You can only upload a maximum of 30 images.');
             this.value = '';
         }
     });
@@ -87,7 +151,6 @@
         document.getElementById('blur-background').style.display = 'block';
     };
 </script>
-
 
 <style>
 #loading {

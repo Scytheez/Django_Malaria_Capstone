@@ -7,7 +7,8 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 
-dataset_path = '../../../Documents/Malaria Dataset/validation dataset'   # Change path 
+#dataset_path = '../../../Documents/Malaria Dataset/validation dataset'   # Change path 
+dataset_path = 'C:/Users/flore/Documents/Malaria Dataset/validation dataset'
 data_dir = pathlib.Path(dataset_path).with_suffix('')
 
 image_count = len(list(data_dir.glob('*/*')))
@@ -78,11 +79,12 @@ model.compile(
     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=['accuracy'])
 
-epochs = 5
+epochs = 6
 history = model.fit(
     train_ds,
     validation_data=val_ds,
     epochs=epochs)
 
 #save model
-model.save('trained_model/val_model.keras')
+#model.save('trained_model/val_model.keras')
+model.save('C:/Users/flore/Downloads/Django_Mal_Pred_Caps/my_project/ML_Pred_Malaria_Backend/trained_model/val_model.keras')

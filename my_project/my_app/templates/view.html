@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -33,7 +33,7 @@
                 {% endfor %}
             </div>
 
-            <!-- pagination -->
+             pagination 
             <div class="pagination text-center my-20">
                 <span class="step-links">
                     {% if record_page_obj.has_previous %}
@@ -72,5 +72,81 @@
         
         </div>
     </section>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/css/styles.css' %}">
+    <title>View</title>
+    <style>
+        .bg-custom-blue {
+            background-color: #DFF5FF;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <section class="bg-custom-blue rounded-2xl p-4 mb-8">
+            <div class="flex justify-end mb-4">
+                <a href="{% url 'records' %}" class="px-6 py-2 my-4 mx-4 rounded-xl bg-black text-white tracking-wider hover:bg-sky-800">Records</a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                {% for image in record_page_obj %}
+                    <a href="{{ image.image.url }}" target="_blank" class="block">
+                        <div class="bg-neutral-800 rounded-3xl text-neutral-300 p-4 flex flex-col items-center justify-center gap-3 hover:bg-gray-900 hover:shadow-2xl hover:shadow-sky-400 transition-shadow">
+                            <div class="w-full aspect-square bg-sky-300 rounded-2xl overflow-hidden">
+                                <img src="{{ image.image.url }}" alt="image" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <div class="text-center">
+                                <p class="text-base font-extrabold uppercase">{{image.con_lvl}}% | {{image.label}}</p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- pagination -->
+            <div class="pagination text-center my-8">
+                <span class="step-links">
+                    {% if record_page_obj.has_previous %}
+                        <a href="?page=1" class="px-2 py-1 bg-sky-500 text-white rounded mr-1">&laquo; first</a>
+                        <a href="?page={{ record_page_obj.previous_page_number }}" class="px-2 py-1 bg-sky-500 text-white rounded mr-1">previous</a>
+                    {% endif %}
+        
+                    <span class="current px-2 py-1 bg-gray-200 rounded">
+                        Page {{ record_page_obj.number }} of {{ record_page_obj.paginator.num_pages }}
+                    </span>
+        
+                    {% if record_page_obj.has_next %}
+                        <a href="?page={{ record_page_obj.next_page_number }}" class="px-2 py-1 bg-sky-500 text-white rounded ml-1">next</a>
+                        <a href="?page={{ record_page_obj.paginator.num_pages }}" class="px-2 py-1 bg-sky-500 text-white rounded ml-1">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </section>
+
+        <section class="bg-custom-blue rounded-2xl p-4">
+            <h2 class="text-center text-black text-2xl md:text-3xl font-extrabold tracking-wider mb-8">EXPORT</h2>
+            
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button class="p-2 px-20 my-2 mx-10 bg-black rounded-xl">
+                {% for rec in record_page_obj %}
+                    <a href="{% url 'pdf_generate' rec.record_number_id %}" class="text-3xl text-white font-bold">{% endfor %}PDF</a>
+                </button>
+                
+                <button class="p-2 px-20 my-2 mx-10 bg-black rounded-xl">
+                {% for rec in record_page_obj %}
+                    <a href="{% url 'csv_generate' rec.record_number_id %}" class="text-3xl text-white font-bold">{% endfor %}CSV</a>
+                </button>
+            </div>
+        </section>
+    </div>
 </body>
 </html>

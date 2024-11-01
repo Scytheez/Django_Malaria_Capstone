@@ -17,9 +17,9 @@ body {
     justify-content: center;
 }
 
-/* upload.html */
+/* ===============upload.html=============== */
 
-.frame {
+/* .frame {
     background: #DFF5FF;
     width: 97%;
     height: 94vh;
@@ -58,11 +58,12 @@ body {
 .hl {
     width: 30vw;
     height: 2px;
-}
+} */
 
-/* display.html */
 
-.up-frame {
+/* ===============display.html=================== */
+
+/* .up-frame {
     background: #DFF5FF;
     width: 97vw;
     height: 80vh;
@@ -72,14 +73,14 @@ body {
 .down-frame {
     background: #DFF5FF;
     width: 97vw;
-    /* height: 100vh; */
+     height: 100vh; 
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
-}
+} */
 
-/* records.html */
+/* ===================records.html================== */
 
-.rec-main-frame {
+/* .rec-main-frame {
     width: 97%;
     height: 94vh;
     margin-top: 1.5rem;
@@ -97,11 +98,11 @@ body {
     height: 93vh;
     background: #DFF5FF;
     margin: 1rem 0.5rem 1rem;
-}
+} */
 
-/* view.html */
+/* ====================view.html==================== */
 
-.top-frame {
+/* .top-frame {
     background: #DFF5FF;
     width: 97vw;
     margin-top: 1.5rem;
@@ -111,4 +112,4 @@ body {
     background: #DFF5FF;
     width: 97vw;
     margin-top: 1.5rem;
-}
+} */
